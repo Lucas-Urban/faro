@@ -46,7 +46,7 @@ def escolhe_imagem():
 # Define a janela do programa
 janela = Tk()
 janela.title("Classificador de Cachorros")
-janela.geometry("600x500")
+janela.geometry("600x700")
 
 # Define a imagem padrão na janela
 imagem_padrao = Image.open("padrao.jpg").resize((400, 400))

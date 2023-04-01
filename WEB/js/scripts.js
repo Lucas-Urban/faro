@@ -51,4 +51,10 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     });
 
+
+    document.getElementById("botaoEncontrarPet").addEventListener("click", function() {
+        var cadastrarPetModal = new bootstrap.Modal(document.getElementById("modalEncontrarPet"));
+        cadastrarPetModal.show();
+    });
+
 });
