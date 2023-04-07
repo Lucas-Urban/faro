@@ -1934,6 +1934,12 @@ progress {
   -webkit-overflow-scrolling: touch;
 }
 
+@media (max-width: 768px) {
+  .text-center a {
+    margin-bottom: 10px;
+  }
+}
+
 @media (max-width: 575.98px) {
   .table-responsive-sm {
     overflow-x: auto;
