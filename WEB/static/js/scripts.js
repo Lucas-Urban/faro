@@ -40,6 +40,15 @@ $(document).ready(function () {
     });
   });
 
+  var input = $('#inputLocalPet')[0];
+  var autocomplete = new google.maps.places.Autocomplete(input);
+
+  autocomplete.addListener('place_changed', function () {
+    var place = autocomplete.getPlace();
+    $('#latLocalPet').val(place.geometry['location'].lat());
+    $('#longLocalPet').val(place.geometry['location'].lng());
+  });
+
   $('#botaoEncontrarPet').on('click', function () {
     const cadastrarPetModal = new bootstrap.Modal($('#modalEncontrarPet')[0]);
     cadastrarPetModal.show();

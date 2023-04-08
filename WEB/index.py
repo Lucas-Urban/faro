@@ -42,7 +42,7 @@ dataset, info = tfds.load('stanford_dogs', with_info=True, as_supervised=True)
 class_names = np.array(info.features['label'].names)
 
 # Carrega o modelo treinado
-modelo_path = 'WEB\modelo_dogs.h5'
+modelo_path = 'WEB/modelo_dogs.h5'
 modelo = tf.keras.models.load_model(modelo_path)
 
 # Define o número de classes e as dimensões das imagens
@@ -73,4 +73,4 @@ def classificar_imagem(imagem):
     return classe
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port= 80)
+    app.run(debug=True, host='0.0.0.0')

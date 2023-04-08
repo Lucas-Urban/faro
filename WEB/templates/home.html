@@ -175,12 +175,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="inputLocalPet" class="form-label">Último local visto*</label>
-                        <input type="text" class="form-control" id="inputLocalPet" name="inputLocalPet" required>
+                        <input type="text" class="form-control input-maps" id="inputLocalPet" name="inputLocalPet" required>
+                        <input type="text" class="form-control input-maps" id="latLocalPet" name="latLocalPet" hidden>
+                        <input type="text" class="form-control input-maps" id="longLocalPet" name="longLocalPet" hidden>
                     </div>
                     <div class="mb-3">
                         <label for="inputFotoPet" class="form-label">Fotos do Pet*</label>
                         <input type="file" class="form-control" id="inputFotoPet" name="inputFotoPet[]" multiple
-                            required>
+                        accept="image/jpeg,image/png,image/gif,image/bmp"  required>
                     </div>
                     <div class="mb-3">
                         <label for="inputNomeTutor" class="form-label">Nome do Tutor*</label>
@@ -253,6 +255,8 @@
     <!-- Core theme JS-->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo_oFlFp61FAZPJzh0qrhXzK_0mHSAX-w&libraries=places"></script>
 
 
 </body>
