@@ -47,7 +47,7 @@
                     <h1 class="mx-auto my-0 text-uppercase">Faro</h1>
                     <h2 class="text-white-50 mx-auto mt-2 mb-5">Uma plataforma gratuita, inteligênte e rápida para
                         encontrar seu PET</h2>
-                    <a class="btn btn-primary" id="botaoEncontrarPet"  style="width: 200px;">Encontrar PET</a>
+                    <a class="btn btn-primary" id="botaoEncontrarPet" style="width: 200px;">Encontrar PET</a>
                     <a class="btn btn-primary" id="botaoPetEncontrado" style="width: 200px;">PET Encontrado</a>
                 </div>
             </div>
@@ -166,23 +166,25 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="modal-processing" style="display:none;">
+                    <div class="modal-processing" style="display:none; justify-content: center;">
                         Processando...
                     </div>
                     <div class="mb-3">
                         <label for="inputNomePet" class="form-label">Nome do Pet</label>
-                        <input type="text" class="form-control" id="inputNomePet" name="inputNomePet" placeholder="Se não souber pode deixar em branco">
+                        <input type="text" class="form-control" id="inputNomePet" name="inputNomePet"
+                            placeholder="Se não souber pode deixar em branco">
                     </div>
                     <div class="mb-3">
                         <label for="inputLocalPet" class="form-label">Último local visto*</label>
-                        <input type="text" class="form-control input-maps" id="inputLocalPet" name="inputLocalPet" required>
+                        <input type="text" class="form-control input-maps" id="inputLocalPet" name="inputLocalPet"
+                            required>
                         <input type="text" class="form-control input-maps" id="latLocalPet" name="latLocalPet" hidden>
                         <input type="text" class="form-control input-maps" id="longLocalPet" name="longLocalPet" hidden>
                     </div>
                     <div class="mb-3">
                         <label for="inputFotoPet" class="form-label">Fotos do Pet*</label>
                         <input type="file" class="form-control" id="inputFotoPet" name="inputFotoPet[]" multiple
-                        accept="image/jpeg,image/png,image/gif,image/bmp"  required>
+                            accept="image/jpeg,image/png,image/gif,image/bmp" required>
                     </div>
                     <div class="mb-3">
                         <label for="inputNomeTutor" class="form-label">Nome do Tutor*</label>
@@ -201,6 +203,54 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="enviarPet">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPetEncontrado" tabindex="-1" aria-labelledby="modalPetEncontradoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPetEncontradoLabel">Pet Encontrado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-processing" style="display:none; justify-content: center;">
+                        Processando...
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputLocalPetEncontrado" class="form-label">Último local visto*</label>
+                        <input type="text" class="form-control input-maps" id="inputLocalPetEncontrado"
+                            name="inputLocalPetEncontrado" required>
+                        <input type="text" class="form-control input-maps" id="latLocalPetEncontrado"
+                            name="latLocalPetEncontrado" hidden>
+                        <input type="text" class="form-control input-maps" id="longLocalPetEncontrado"
+                            name="longLocalPetEncontrado" hidden>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputFotoPetEncontrado" class="form-label">Fotos do Pet*</label>
+                        <input type="file" class="form-control" id="inputFotoPetEncontrado"
+                            name="inputFotoPetEncontrado[]" multiple accept="image/jpeg,image/png,image/gif,image/bmp"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputNomeAnjo" class="form-label">Seu Nome</label>
+                        <input type="text" class="form-control" id="inputNomeAnjo" name="inputNomeAnjo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputEmailAnjo" class="form-label">Seu Email</label>
+                        <input type="email" class="form-control" id="inputEmailAnjo" name="inputEmailAnjo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputTelefoneAnjo" class="form-label">Seu Telefone</label>
+                        <input type="tel" class="form-control" id="inputTelefoneAnjo" name="inputTelefoneAnjo">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="enviarPetEncontrado">Enviar</button>
                 </div>
             </div>
         </div>
@@ -235,7 +285,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="mensagemErro"></p>
+                    <p id="mensagemErro">Erro ao processar sua solicitação, tente novamente.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -249,15 +299,15 @@
     <footer class="footer bg-black small text-center text-white-50">
         <div class="container px-4 px-lg-5">&copy; Faro 2023</div>
     </footer>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo_oFlFp61FAZPJzh0qrhXzK_0mHSAX-w&libraries=places"></script>
-
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo_oFlFp61FAZPJzh0qrhXzK_0mHSAX-w&libraries=places&callback=initMap"
+        async defer></script>
 
 </body>
 
