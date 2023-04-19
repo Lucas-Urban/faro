@@ -29,19 +29,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  const botaoEncontrarPet = document.getElementById('botaoEncontrarPet');
+  const botaoAbrirModalEncontrarPet = document.getElementById('botaoAbrirModalEncontrarPet');
   const encontrarPetModal = document.getElementById('modalEncontrarPet');
 
-  botaoEncontrarPet.addEventListener('click', function () {
+  botaoAbrirModalEncontrarPet.addEventListener('click', function () {
     const modal = new bootstrap.Modal(encontrarPetModal);
     modal.show();
   });
 
-  const botaoPetEncontrado = document.getElementById('botaoPetEncontrado');
-  const petEncontradoModal = document.getElementById('modalPetEncontrado');
+  const botaoAbrirModalbotaoEncontrarTutor = document.getElementById('botaoAbrirModalbotaoEncontrarTutor');
+  const EncontrarTutorModal = document.getElementById('modalEncontrarTutor');
 
-  botaoPetEncontrado.addEventListener('click', function () {
-    const modal = new bootstrap.Modal(petEncontradoModal);
+  botaoAbrirModalbotaoEncontrarTutor.addEventListener('click', function () {
+    const modal = new bootstrap.Modal(EncontrarTutorModal);
     modal.show();
   });
 
@@ -57,12 +57,15 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  const enviarPetButton = document.getElementById('enviarPet');
-  enviarPetButton.addEventListener('click', function () {
+  const EncontrarPetButton = document.getElementById('EncontrarPet');
+  EncontrarPetButton.addEventListener('click', function () {
     encontrarPet();
   });
 
-
+  const EncontrarTutorButton = document.getElementById('EncontrarTutor');
+  EncontrarTutorButton.addEventListener('click', function () {
+    encontrarTutor();
+  });
 });
 
 
@@ -89,25 +92,25 @@ function initMap() {
   inputLocalPet.setAttribute("autocomplete", "new-password");
 
   // Cria um novo objeto autocomplete para cada campo de endereço
-  const inputLocalPetEncontrado = document.getElementById('inputLocalPetEncontrado');
-  const autocompleteLocalPetEncontrado = new google.maps.places.Autocomplete(inputLocalPetEncontrado, {
+  const inputLocalEncontrarTutor = document.getElementById('inputLocalEncontrarTutor');
+  const autocompleteLocalEncontrarTutor = new google.maps.places.Autocomplete(inputLocalEncontrarTutor, {
     componentRestrictions: { country: 'BR' } // restringe as sugestões de endereços para o Brasil
   });
 
   // Adiciona um listener para atualizar a latitude e longitude do pet quando o endereço é selecionado
-  autocompleteLocalPetEncontrado.addListener('place_changed', () => {
-    const place = autocompleteLocalPetEncontrado.getPlace();
-    const latLocalPetEncontrado = document.getElementById('latLocalPetEncontrado');
-    const longLocalPetEncontrado = document.getElementById('longLocalPetEncontrado');
+  autocompleteLocalEncontrarTutor.addListener('place_changed', () => {
+    const place = autocompleteLocalEncontrarTutor.getPlace();
+    const latLocalEncontrarTutor = document.getElementById('latLocalEncontrarTutor');
+    const longLocalEncontrarTutor = document.getElementById('longLocalEncontrarTutor');
 
-    // Define os valores dos campos latLocalPetEncontrado e longLocalPetEncontrado
+    // Define os valores dos campos latLocalEncontrarTutor e longLocalEncontrarTutor
     if (place.geometry) {
-      latLocalPetEncontrado.value = place.geometry.location.lat();
-      longLocalPetEncontrado.value = place.geometry.location.lng();
+      latLocalEncontrarTutor.value = place.geometry.location.lat();
+      longLocalEncontrarTutor.value = place.geometry.location.lng();
     }
   });
 
-  inputLocalPetEncontrado.setAttribute("autocomplete", "new-password");
+  inputLocalEncontrarTutor.setAttribute("autocomplete", "new-password");
 
 }
 
@@ -157,13 +160,85 @@ function encontrarPet() {
     })
     .then(data => {
       // Limpar campos do formulário
-      document.getElementById('inputNomePet').value = '';
-      document.getElementById('inputLocalPet').value = '';
-      document.getElementById('inputNomeTutor').value = '';
-      document.getElementById('inputEmailTutor').value = '';
-      document.getElementById('inputTelefoneTutor').value = '';
-      document.getElementById('inputFotoPet').value = '';
- 
+      //document.getElementById('inputNomePet').value = '';
+      //document.getElementById('inputLocalPet').value = '';
+      //document.getElementById('inputNomeTutor').value = '';
+      //document.getElementById('inputEmailTutor').value = '';
+      //document.getElementById('inputTelefoneTutor').value = '';
+      //document.getElementById('inputFotoPet').value = '';
+
+      // Esconder mensagem de processamento
+      modalProcessing.style.display = 'none';
+
+      // Exibe a mensagem de sucesso na tela
+      const mensagemSucesso = document.getElementById('mensagemSucesso');
+      mensagemSucesso.textContent = data['mensagem'];
+      const modalEncontrarPet = document.getElementById('modalEncontrarPet');
+      modalEncontrarPet.querySelector('[data-bs-dismiss="modal"]').click();
+      const modalSucesso = new bootstrap.Modal(document.getElementById('modalSucesso'));
+      modalSucesso.show();
+    })
+    .catch(error => {
+      console.log("erro");
+      // Esconder mensagem de processamento
+      modalProcessing.style.display = 'none';
+
+
+      const modalErro = new bootstrap.Modal(document.getElementById('modalErro'));
+      modalErro.show(); // Exibe o modal de erro
+    });
+}
+function encontrarTutor() {
+
+  const inputLocalEncontrarTutor = document.getElementById('inputLocalEncontrarTutor').value;
+  const inputNomeAnjo = document.getElementById('inputNomeAnjo').value;
+  const inputEmailAnjo = document.getElementById('inputEmailAnjo').value;
+  const inputTelefoneAnjo = document.getElementById('inputTelefoneAnjo').value;
+  const inputFotoEncontrarTutor = document.getElementById('inputFotoEncontrarTutor').value;
+
+  if (!inputLocalEncontrarTutor || !inputNomeAnjo || !inputEmailAnjo || !inputTelefoneAnjo || !inputFotoEncontrarTutor) {
+    // Exibe mensagem de erro e sai da função
+    alert('Por favor, preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('inputLocalEncontrarTutor', inputLocalEncontrarTutor);
+
+  // Loop através dos arquivos selecionados e adiciona-los ao formData
+  const files = document.getElementById('inputFotoEncontrarTutor').files;
+  for (var i = 0; i < files.length; i++) {
+    formData.append('inputFotoEncontrarTutor[]', files[i]);
+  }
+
+  formData.append('inputNomeAnjo', inputNomeAnjo);
+  formData.append('inputEmailAnjo', inputEmailAnjo);
+  formData.append('inputTelefoneAnjo', inputTelefoneAnjo);
+
+  // Mostrar mensagem de processamento
+  const modalProcessing = document.querySelector('.modal-processing');
+  modalProcessing.style.display = 'block';
+
+  fetch('encontrar_tutor', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Erro ao enviar requisição');
+      }
+    })
+    .then(data => {
+      // Limpar campos do formulário
+      //document.getElementById('inputNomePet').value = '';
+      //document.getElementById('inputLocalEncontrarTutor').value = '';
+      //document.getElementById('inputNomeAnjo').value = '';
+      //document.getElementById('inputEmailAnjo').value = '';
+      //document.getElementById('inputTelefoneAnjo').value = '';
+      //document.getElementById('inputFotoEncontrarTutor').value = '';
+
       // Esconder mensagem de processamento
       modalProcessing.style.display = 'none';
 
