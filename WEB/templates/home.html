@@ -45,10 +45,10 @@
             <div class="d-flex justify-content-center">
                 <div class="text-center">
                     <h1 class="mx-auto my-0 text-uppercase">Faro</h1>
-                    <h2 class="text-white-50 mx-auto mt-2 mb-5">Uma plataforma gratuita, inteligênte e rápida para
+                    <h2 class="text-white-50 mx-auto mt-2 mb-5">Uma plataforma gratuita, inteligente e rápida para
                         encontrar seu PET</h2>
-                    <a class="btn btn-primary" id="botaoEncontrarPet" style="width: 200px;">Encontrar PET</a>
-                    <a class="btn btn-primary" id="botaoPetEncontrado" style="width: 200px;">PET Encontrado</a>
+                    <a class="btn btn-primary" id="botaoAbrirModalEncontrarPet" style="width: 200px;">Encontrar PET</a>
+                    <a class="btn btn-primary" id="botaoAbrirModalbotaoEncontrarTutor" style="width: 200px;">Encontrar Tutor</a>
                 </div>
             </div>
         </div>
@@ -202,18 +202,18 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="enviarPet">Enviar</button>
+                    <button type="button" class="btn btn-primary" id="EncontrarPet">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalPetEncontrado" tabindex="-1" aria-labelledby="modalPetEncontradoLabel"
+    <div class="modal fade" id="modalEncontrarTutor" tabindex="-1" aria-labelledby="modalEncontrarTutorLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalPetEncontradoLabel">Pet Encontrado</h5>
+                    <h5 class="modal-title" id="modalEncontrarTutorLabel">Pet Encontrado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -221,18 +221,18 @@
                         Processando...
                     </div>
                     <div class="mb-3">
-                        <label for="inputLocalPetEncontrado" class="form-label">Último local visto*</label>
-                        <input type="text" class="form-control input-maps" id="inputLocalPetEncontrado"
-                            name="inputLocalPetEncontrado" required>
-                        <input type="text" class="form-control input-maps" id="latLocalPetEncontrado"
-                            name="latLocalPetEncontrado" hidden>
-                        <input type="text" class="form-control input-maps" id="longLocalPetEncontrado"
-                            name="longLocalPetEncontrado" hidden>
+                        <label for="inputLocalEncontrarTutor" class="form-label">Último local visto*</label>
+                        <input type="text" class="form-control input-maps" id="inputLocalEncontrarTutor"
+                            name="inputLocalEncontrarTutor" required>
+                        <input type="text" class="form-control input-maps" id="latLocalEncontrarTutor"
+                            name="latLocalEncontrarTutor" hidden>
+                        <input type="text" class="form-control input-maps" id="longLocalEncontrarTutor"
+                            name="longLocalEncontrarTutor" hidden>
                     </div>
                     <div class="mb-3">
-                        <label for="inputFotoPetEncontrado" class="form-label">Fotos do Pet*</label>
-                        <input type="file" class="form-control" id="inputFotoPetEncontrado"
-                            name="inputFotoPetEncontrado[]" multiple accept="image/jpeg,image/png,image/gif,image/bmp"
+                        <label for="inputFotoEncontrarTutor" class="form-label">Fotos do Pet*</label>
+                        <input type="file" class="form-control" id="inputFotoEncontrarTutor"
+                            name="inputFotoEncontrarTutor[]" multiple accept="image/jpeg,image/png,image/gif,image/bmp"
                             required>
                     </div>
                     <div class="mb-3">
@@ -250,7 +250,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="enviarPetEncontrado">Enviar</button>
+                    <button type="button" class="btn btn-primary" id="EncontrarTutor">Enviar</button>
                 </div>
             </div>
         </div>
