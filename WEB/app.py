@@ -76,5 +76,46 @@ def encontrar_pet():
 
     return jsonify({'mensagem': mensagem}), 200
 
+@app.route('/encontrar_tutor', methods=['POST'])
+def encontrar_tutor():
+    inputLocalEncontrarTutor = request.form.get('inputLocalEncontrarTutor')
+    inputFotosPet = request.files.getlist('inputFotoEncontrarTutor[]')
+    inputNomeAnjo = request.form.get('inputNomeAnjo')
+    inputEmailAnjo = request.form.get('inputEmailAnjo')
+    inputTelefoneAnjo = request.form.get('inputTelefoneAnjo')
+
+    # Prepara a mensagem de sucesso
+    classes = []
+    for foto in inputFotosPet:
+        foto_path = os.path.join(app.config['UPLOAD_FOLDER'], foto.filename)
+        classe = classificar_imagem(foto_path)
+        classes.append(classe)
+        
+    classe_mais_frequente = mode(classes)
+
+    # Adicione 1 para obter a raça correspondente
+    raca = classe_mais_frequente
+    
+    # Cria o objeto encontrar_tutor
+    encontrar_tutor = EncontrarPet(nome=inputNomePet, local=inputLocalEncontrarTutor, an_nome=inputNomeAnjo, an_email=inputEmailAnjo, an_telefone=inputTelefoneAnjo, raca= raca)
+
+    # Processa as imagens e adiciona à lista de encontrar_tutor_fotos do encontrar_tutor
+    for foto in inputFotosPet:
+        arquivo = secure_filename(foto.filename)
+        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], arquivo)
+        foto.save(caminho_arquivo)
+        nova_foto = EncontrarPetFoto(arquivo=arquivo)
+        encontrar_tutor.fotos.append(nova_foto)
+
+    # Salva o encontrar_tutor e suas encontrar_tutor_fotos no banco de dados
+    db.session.add(encontrar_tutor)
+    db.session.commit()
+
+
+    mensagem = f"Pet encontrado! Nome: {inputNomePet}, Local: {inputLocalEncontrarTutor}, Nome do an: {inputNomeAnjo}, E-mail: {inputEmailAnjo}, Telefone: {inputTelefoneAnjo} raça: {raca}"
+    print(mensagem)  # Apenas para depuração
+
+    return jsonify({'mensagem': mensagem}), 200
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
