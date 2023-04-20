@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content="Faro" />
+    <meta name="author" content="Lucas Urban" />
     <title>Faro - Encontre seu Pet</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" />
     <!-- Font Awesome icons (free version)-->
@@ -45,10 +45,10 @@
             <div class="d-flex justify-content-center">
                 <div class="text-center">
                     <h1 class="mx-auto my-0 text-uppercase">Faro</h1>
-                    <h2 class="text-white-50 mx-auto mt-2 mb-5">Uma plataforma gratuita, inteligente e rápida para
+                    <h2 class="text-white mx-auto mt-2 mb-5">Uma plataforma gratuita, inteligente e rápida para
                         encontrar seu PET</h2>
-                    <a class="btn btn-primary" id="botaoAbrirModalEncontrarPet" style="width: 200px;">Encontrar PET</a>
-                    <a class="btn btn-primary" id="botaoAbrirModalbotaoEncontrarTutor" style="width: 200px;">Encontrar Tutor</a>
+                    <a class="btn btn-light" id="botaoAbrirModalEncontrarPet" style="width: 200px;">Encontrar PET</a>
+                    <a class="btn btn-light" id="botaoAbrirModalbotaoEncontrarTutor" style="width: 200px;">Encontrar Tutor</a>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-lg-8">
                     <h2 class="text-white mb-4">Inteligência Artifical para te ajudar</h2>
-                    <p class="text-white-50">
+                    <p class="text-white">
                         O Faro Um é um projeto tecnológico que tem como objetivo auxiliar donos de cães perdidos a
                         resgatá-los das ruas. Ele utiliza técnicas de visão computacional e a cooperação entre usuários
                         para ajudar nesse momento difícil.
@@ -79,8 +79,8 @@
                 <div class="col-xl-4 col-lg-5">
                     <div class="featured-text text-center text-lg-left">
                         <h4>Projeto</h4>
-                        <p class="text-black-50 mb-0">Nós utilizamos redes neurais artificiais para localizar o seu
-                            melhor amigo e trazê-lo de volta para casa, junto daqueles que você ama.</p>
+                        <p class="text-black mb-0">Nós utilizamos redes neurais artificiais para localizar o seu
+                            melhor amigo e trazê-lo de volta para casa, junto daqueles que o amam.</p>
                     </div>
                 </div>
             </div>
@@ -93,10 +93,10 @@
                         <div class="d-flex h-100">
                             <div class="project-text w-100 my-auto text-center text-lg-left">
                                 <h4 class="text-white">Encontrar PET</h4>
-                                <p class="mb-0 text-white-50">A função "Encontrar meu PET" permite que o tutor forneça
+                                <p class="mb-0 text-white">A função "Encontrar PET" permite que o tutor forneça
                                     imagens e informações básicas do seu cão perdido. O sistema utiliza uma Rede Neural
                                     para buscar possíveis resultados na base de dados e notifica o tutor sobre novos
-                                    registros de "PET Encontrado".</p>
+                                    registros de "Encontrar Tutor".</p>
                             </div>
                         </div>
                     </div>
@@ -110,8 +110,8 @@
                     <div class="bg-black text-center h-100 project">
                         <div class="d-flex h-100">
                             <div class="project-text w-100 my-auto text-center text-lg-right">
-                                <h4 class="text-white">Pet Encontrado</h4>
-                                <p class="mb-0 text-white-50">A função "PET Encontrado" permite que o usuário forneça
+                                <h4 class="text-white">Encontrar Tutor</h4>
+                                <p class="mb-0 text-white">A função "Encontrar Tutor" permite que o usuário forneça
                                     imagens e a localização atual de um cão perdido. O sistema notifica possíveis
                                     tutores que estão buscando seus pets, com base nas características físicas do
                                     animal.</p>
@@ -133,7 +133,7 @@
                             <i class="fas fa-map-marked-alt text-primary mb-2"></i>
                             <h4 class="text-uppercase m-0">Ulbra</h4>
                             <hr class="my-4 mx-auto" />
-                            <div class="small text-black-50"><a
+                            <div class="small text-black"><a
                                     href="https://www.ulbra.br/gravatai">https://www.ulbra.br/gravatai</a></div>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                             <i class="fas fa-envelope text-primary mb-2"></i>
                             <h4 class="text-uppercase m-0">Email</h4>
                             <hr class="my-4 mx-auto" />
-                            <div class="small text-black-50"><a href="#!">urban@rede.ulbra.br</a></div>
+                            <div class="small text-black"><a href="#!">urban@rede.ulbra.br</a></div>
                         </div>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
 
     <div class="modal fade" id="modalEncontrarPet" tabindex="-1" aria-labelledby="modalEncontrarPetLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalEncontrarPetLabel">Encontrar Pet</h5>
@@ -210,10 +210,10 @@
 
     <div class="modal fade" id="modalEncontrarTutor" tabindex="-1" aria-labelledby="modalEncontrarTutorLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEncontrarTutorLabel">Pet Encontrado</h5>
+                    <h5 class="modal-title" id="modalEncontrarTutorLabel">Encontrar Tutor</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -296,7 +296,7 @@
 
 
     <!-- Footer-->
-    <footer class="footer bg-black small text-center text-white-50">
+    <footer class="footer bg-black small text-center text-white">
         <div class="container px-4 px-lg-5">&copy; Faro 2023</div>
     </footer>
     <!-- Bootstrap core JS-->
