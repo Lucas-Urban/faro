@@ -24,13 +24,10 @@ def redimensiona_imagem(imagem):
     return imagem
 
 # Define a função para classificar uma imagem
-def classificar_imagem(caminho_imagem):
+def classificar_imagem(arquivo_imagem):
     
-    # Lê a imagem
-    imagem = tf.io.read_file(caminho_imagem)
-    
-    # Decodifica a imagem
-    imagem = tf.image.decode_image(imagem, channels=3)
+    # Lê a imagem a partir do objeto FileStorage
+    imagem = tf.image.decode_image(arquivo_imagem.read(), channels=3)
     
     # Faz o pré-processamento da imagem
     imagem = redimensiona_imagem(imagem)

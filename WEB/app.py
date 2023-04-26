@@ -30,6 +30,21 @@ class EncontrarPetFoto(db.Model):
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id'), nullable=False)
     arquivo = db.Column(db.String(50))
 
+class EncontrarTutor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    local = db.Column(db.String(200))
+    anjo_nome = db.Column(db.String(200))
+    anjo_email = db.Column(db.String(100))
+    anjo_telefone = db.Column(db.String(20))
+    raca = db.Column(db.String(50))
+    fotos = db.relationship('EncontrarTutorFoto', backref='encontrar_tutor', lazy=True)
+
+class EncontrarTutorFoto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id'), nullable=False)
+    arquivo = db.Column(db.String(50))
+
+
 @app.route('/')
 def homepage():
     return render_template("home.html")
@@ -43,11 +58,11 @@ def encontrar_pet():
     inputEmailTutor = request.form.get('inputEmailTutor')
     inputTelefoneTutor = request.form.get('inputTelefoneTutor')
 
+    
     # Prepara a mensagem de sucesso
     classes = []
     for foto in inputFotosPet:
-        foto_path = os.path.join(app.config['UPLOAD_FOLDER'], foto.filename)
-        classe = classificar_imagem(foto_path)
+        classe = classificar_imagem(foto)
         classes.append(classe)
         
     classe_mais_frequente = mode(classes)
@@ -70,7 +85,6 @@ def encontrar_pet():
     db.session.add(encontrar_pet)
     db.session.commit()
 
-
     mensagem = f"Pet encontrado! Nome: {inputNomePet}, Local: {inputLocalPet}, Nome do Tutor: {inputNomeTutor}, E-mail: {inputEmailTutor}, Telefone: {inputTelefoneTutor} raça: {raca}"
     print(mensagem)  # Apenas para depuração
 
@@ -87,8 +101,7 @@ def encontrar_tutor():
     # Prepara a mensagem de sucesso
     classes = []
     for foto in inputFotosPet:
-        foto_path = os.path.join(app.config['UPLOAD_FOLDER'], foto.filename)
-        classe = classificar_imagem(foto_path)
+        classe = classificar_imagem(foto)
         classes.append(classe)
         
     classe_mais_frequente = mode(classes)
@@ -97,22 +110,21 @@ def encontrar_tutor():
     raca = classe_mais_frequente
     
     # Cria o objeto encontrar_tutor
-    encontrar_tutor = EncontrarPet(nome=inputNomePet, local=inputLocalEncontrarTutor, an_nome=inputNomeAnjo, an_email=inputEmailAnjo, an_telefone=inputTelefoneAnjo, raca= raca)
+    encontrar_tutor = EncontrarTutor(local=inputLocalEncontrarTutor, anjo_nome=inputNomeAnjo, anjo_email=inputEmailAnjo, anjo_telefone=inputTelefoneAnjo, raca= raca)
 
     # Processa as imagens e adiciona à lista de encontrar_tutor_fotos do encontrar_tutor
     for foto in inputFotosPet:
         arquivo = secure_filename(foto.filename)
         caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], arquivo)
         foto.save(caminho_arquivo)
-        nova_foto = EncontrarPetFoto(arquivo=arquivo)
+        nova_foto = EncontrarTutorFoto(arquivo=arquivo)
         encontrar_tutor.fotos.append(nova_foto)
 
     # Salva o encontrar_tutor e suas encontrar_tutor_fotos no banco de dados
     db.session.add(encontrar_tutor)
     db.session.commit()
 
-
-    mensagem = f"Pet encontrado! Nome: {inputNomePet}, Local: {inputLocalEncontrarTutor}, Nome do an: {inputNomeAnjo}, E-mail: {inputEmailAnjo}, Telefone: {inputTelefoneAnjo} raça: {raca}"
+    mensagem = f"Pet encontrado! Local: {inputLocalEncontrarTutor}, Nome do anjo: {inputNomeAnjo}, E-mail: {inputEmailAnjo}, Telefone: {inputTelefoneAnjo} raça: {raca}"
     print(mensagem)  # Apenas para depuração
 
     return jsonify({'mensagem': mensagem}), 200
