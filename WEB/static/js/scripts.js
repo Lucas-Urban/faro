@@ -118,6 +118,8 @@ function initMap() {
 function encontrarPet() {
 
   const inputLocalPet = document.getElementById('inputLocalPet').value;
+  const latLocalPet = document.getElementById('latLocalPet').value;
+  const longLocalPet = document.getElementById('longLocalPet').value;
   const inputNomeTutor = document.getElementById('inputNomeTutor').value;
   const inputEmailTutor = document.getElementById('inputEmailTutor').value;
   const inputTelefoneTutor = document.getElementById('inputTelefoneTutor').value;
@@ -132,6 +134,8 @@ function encontrarPet() {
   const formData = new FormData();
   formData.append('inputNomePet', document.getElementById('inputNomePet').value);
   formData.append('inputLocalPet', inputLocalPet);
+  formData.append('latLocalPet', latLocalPet);
+  formData.append('longLocalPet', longLocalPet);
 
   // Loop através dos arquivos selecionados e adiciona-los ao formData
   const files = document.getElementById('inputFotoPet').files;
@@ -196,6 +200,9 @@ function encontrarTutor() {
   const inputTelefoneAnjo = document.getElementById('inputTelefoneAnjo').value;
   const inputFotoEncontrarTutor = document.getElementById('inputFotoEncontrarTutor').value;
 
+  const latLocalEncontrarTutor = document.getElementById('latLocalEncontrarTutor').value;
+  const longLocalEncontrarTutor = document.getElementById('longLocalEncontrarTutor').value;
+
   if (!inputLocalEncontrarTutor || !inputNomeAnjo || !inputEmailAnjo || !inputTelefoneAnjo || !inputFotoEncontrarTutor) {
     // Exibe mensagem de erro e sai da função
     alert('Por favor, preencha todos os campos obrigatórios.');
@@ -214,6 +221,8 @@ function encontrarTutor() {
   formData.append('inputNomeAnjo', inputNomeAnjo);
   formData.append('inputEmailAnjo', inputEmailAnjo);
   formData.append('inputTelefoneAnjo', inputTelefoneAnjo);
+  formData.append('latLocalEncontrarTutor', latLocalEncontrarTutor);
+  formData.append('longLocalEncontrarTutor', longLocalEncontrarTutor);
 
   // Mostrar mensagem de processamento
   const modalProcessing = document.querySelector('.modal-processing');
