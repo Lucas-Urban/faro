@@ -28,11 +28,18 @@ class EncontrarPet(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     fotos = db.relationship('EncontrarPetFoto', backref='encontrar_pet', lazy=True)
+    racas = db.relationship('RacaPet', backref='encontrar_pet', lazy=True)
 
 class EncontrarPetFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
     arquivo = db.Column(db.String(50))
+    
+class RacaPet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
+    raca = db.Column(db.String(50))
+    precisao = db.Column(db.Float)
 
 class EncontrarTutor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,22 +50,18 @@ class EncontrarTutor(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     fotos = db.relationship('EncontrarTutorFoto', backref='encontrar_tutor', lazy=True)
+    racas = db.relationship('RacaTutor', backref='encontrar_tutor', lazy=True)
 
 class EncontrarTutorFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
     arquivo = db.Column(db.String(50))
 
-class RacaPet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    raca = db.Column(db.String(50))
-    encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
-
 class RacaTutor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    raca = db.Column(db.String(50))
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
-
+    raca = db.Column(db.String(50))
+    precisao = db.Column(db.Float)
 
 @app.route('/')
 def homepage():
@@ -75,19 +78,21 @@ def encontrar_pet():
     latLocalPet = request.form.get('latLocalPet')
     longLocalPet = request.form.get('longLocalPet')
     
-    # Prepara a mensagem de sucesso
-    classes = []
-    for foto in inputFotosPet:
-        classe = classificar_imagem(foto)
-        classes.append(classe)
         
-    classe_mais_frequente = mode(classes)
-
-    # Adicione 1 para obter a raça correspondente
-    raca = classe_mais_frequente
-    
     # Cria o objeto encontrar_pet
-    encontrar_pet = EncontrarPet(nome=inputNomePet, local=inputLocalPet, tutor_nome=inputNomeTutor, tutor_email=inputEmailTutor, tutor_telefone=inputTelefoneTutor, raca= raca, latitude= latLocalPet, longitude= longLocalPet)
+    encontrar_pet = EncontrarPet(nome=inputNomePet, local=inputLocalPet, tutor_nome=inputNomeTutor, tutor_email=inputEmailTutor, tutor_telefone=inputTelefoneTutor, latitude= latLocalPet, longitude= longLocalPet)
+
+    # Prepara a mensagem de sucesso
+    racas = []
+    for foto in inputFotosPet:
+        classes = classificar_imagem(foto)
+        classes_ordenadas = sorted(classes, key=lambda x: x['precisao'], reverse=True)
+        for classe in classes_ordenadas[:3]:
+            racas.append({'raca': classe['classe'], 'precisao': classe['precisao']})
+    
+    for raca in racas:
+        nova_raca = RacaPet(raca=raca['raca'], precisao=raca['precisao'])
+        encontrar_pet.racas.append(nova_raca)
 
     # Processa as imagens e adiciona à lista de encontrar_pet_fotos do encontrar_pet
     for foto in inputFotosPet:
@@ -101,7 +106,7 @@ def encontrar_pet():
     db.session.add(encontrar_pet)
     db.session.commit()
 
-    mensagem = f"Pet encontrado! Nome: {inputNomePet}, Local: {inputLocalPet}, Nome do Tutor: {inputNomeTutor}, E-mail: {inputEmailTutor}, Telefone: {inputTelefoneTutor} raça: {raca}"
+    mensagem = f"Pet encontrado! Nome: {inputNomePet}, Local: {inputLocalPet}, Nome do Tutor: {inputNomeTutor}, E-mail: {inputEmailTutor}, Telefone: {inputTelefoneTutor}"
     print(mensagem)  # Apenas para depuração
 
     return jsonify({'mensagem': mensagem}), 200
@@ -116,19 +121,22 @@ def encontrar_tutor():
     latLocalEncontrarTutor = request.form.get('latLocalEncontrarTutor')
     longLocalEncontrarTutor = request.form.get('longLocalEncontrarTutor')
 
-    # Prepara a mensagem de sucesso
-    classes = []
-    for foto in inputFotosPet:
-        classe = classificar_imagem(foto)
-        classes.append(classe)
-        
-    classe_mais_frequente = mode(classes)
-
-    # Adicione 1 para obter a raça correspondente
-    raca = classe_mais_frequente
     
     # Cria o objeto encontrar_tutor
-    encontrar_tutor = EncontrarTutor(local=inputLocalEncontrarTutor, anjo_nome=inputNomeAnjo, anjo_email=inputEmailAnjo, anjo_telefone=inputTelefoneAnjo, raca= raca, latitude= latLocalEncontrarTutor, longitude= longLocalEncontrarTutor)
+    encontrar_tutor = EncontrarTutor(local=inputLocalEncontrarTutor, anjo_nome=inputNomeAnjo, anjo_email=inputEmailAnjo, anjo_telefone=inputTelefoneAnjo, latitude= latLocalEncontrarTutor, longitude= longLocalEncontrarTutor)
+
+    # Prepara a mensagem de sucesso
+    racas = []
+    for foto in inputFotosPet:
+        classes = classificar_imagem(foto)
+        classes_ordenadas = sorted(classes, key=lambda x: x['precisao'], reverse=True)
+        for classe in classes_ordenadas[:3]:
+            racas.append({'raca': classe['classe'], 'precisao': classe['precisao']})
+    
+    
+    for raca in racas:
+        nova_raca = RacaPet(raca=raca['raca'], precisao=raca['precisao'])
+        encontrar_pet.racas.append(nova_raca)
 
     # Processa as imagens e adiciona à lista de encontrar_tutor_fotos do encontrar_tutor
     for foto in inputFotosPet:

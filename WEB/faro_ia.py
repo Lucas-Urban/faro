@@ -35,6 +35,12 @@ def classificar_imagem(arquivo_imagem):
     # Classifica a imagem com o modelo
     predicao = modelo.predict(np.expand_dims(imagem, axis=0))[0]
     precisoes = np.round(100 * predicao, 2)
-    classes = {class_names[i]: precisoes[i] for i in range(num_classes)}
-    
+    classes = []
+    for i in range(num_classes):
+        if precisoes[i] > 0:
+            classe = class_names[i]
+            precisao = precisoes[i]
+            objeto = {'classe': classe, 'precisao': precisao}
+            classes.append(objeto)
+
     return classes
