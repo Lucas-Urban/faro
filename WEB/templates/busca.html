@@ -27,13 +27,13 @@
     <!-- Navigation-->
     <nav class="navbar navbar-dark  fixed-top">
         <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="http://localhost:5000">Faro</a>
-            <a class="navbar-toggler navbar-toggler-right" 
-                href="http://localhost:5000">
+            <a class="navbar-brand" href="http://192.168.1.2:5000">Faro</a>
+            <a class="navbar-toggler navbar-toggler-right" href="http://192.168.1.2:5000">
                 Voltar
             </a>
         </div>
     </nav>
+    <br>
     <div class="text-center py-5">
         <div class="container">
             <div class="row">
@@ -43,9 +43,8 @@
                     <b>Último local que foi visto</b>
                     <p>{{ resposta['pet']['local'] }}</p>
                     <b>Seus Dados</b>
-                    <p>{{ resposta['pet']['tutor_nome'] }}</p>
-                    <p>{{ resposta['pet']['tutor_email'] }}</p>
-                    <p>{{ resposta['pet']['tutor_telefone'] }}</p>
+                    <p>{{ resposta['pet']['tutor_nome'] }}<br>{{ resposta['pet']['tutor_email'] }}<br>{{
+                        resposta['pet']['tutor_telefone'] }}</p>
                 </div>
             </div>
 
@@ -75,7 +74,7 @@
                     <p>Não foram encontrados registros</p>
                     {% else %}
                     {% for tutor in resposta['tutores'] %}
-                    <div class="col-md-6 p-3">
+                    <div class="col-md-4 p-3" id="card_tutor_{{tutor['id']}}">
                         <div class="card box-shadow">
                             <div class="col-md-12 slider">
                                 {% for foto in tutor['fotos'] %}
@@ -86,13 +85,14 @@
                             <div class="card-body">
                                 <a class="card-text" target="_blank"
                                     href="https://www.google.com/maps/place/{{tutor['local']}}/@{{tutor['longitude']}}{{tutor['latitude']}}z">{{tutor['local']}}</a>
-                                <p class="card-text"><b>Encontrado em:</b> {{tutor['data_hora']}}</p>
+                                <p class="card-text">{{tutor['data_hora']}}</p>
                                 <p class="card-text">
                                     {{tutor['anjo_nome']}}<br>{{tutor['anjo_email']}}<br>{{tutor['anjo_telefone']}}</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                        <button type="button" class="btn btn-sm btn-sucess">Achei!</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                        onclick="naoApresentar({{ resposta['pet']['id'] }}, {{tutor['id']}})">Remover</button>
                                     </div> <small class="text-muted">{{tutor['distancia']}} km</small>
                                 </div>
                             </div>
@@ -138,6 +138,44 @@
                 </div>
             </div>
         </section>
+
+        <!-- Modal de sucesso -->
+        <div class="modal fade" id="modalSucesso" tabindex="-1" role="dialog" aria-labelledby="modalSucessoLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalSucessoLabel">Sucesso!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="mensagemSucesso"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de erro -->
+        <div class="modal fade" id="modalErro" tabindex="-1" role="dialog" aria-labelledby="modalErroLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalErroLabel">Erro!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="mensagemErro">Erro ao processar sua solicitação, tente novamente.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Footer-->
         <footer class="footer bg-black small text-center text-white">

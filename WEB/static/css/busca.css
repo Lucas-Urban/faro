@@ -9638,8 +9638,8 @@ body {
 }
 
 .foto_busca{
-  max-height: 600px;
-  width: auto;
+  max-height: 700px;
+  max-width: auto;
 }
 
 .navbar-dark {

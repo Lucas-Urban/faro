@@ -1,3 +1,4 @@
+from operator import and_
 import uuid
 from flask import Flask, jsonify, render_template, request
 from werkzeug.utils import secure_filename
@@ -47,7 +48,6 @@ class EncontrarPet(db.Model):
     racas = db.relationship('RacaPet', backref='encontrar_pet', lazy=True)
     data = db.Column(db.DateTime, default=datetime.utcnow)
 
-
 class EncontrarPetFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
@@ -81,6 +81,12 @@ class RacaTutor(db.Model):
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
     raca = db.Column(db.String(50))
     precisao = db.Column(db.Float)
+    
+class NaoApresentar(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
+    encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
+    data = db.Column(db.DateTime, default=datetime.utcnow)    
 
 @app.route('/')
 def homepage():
@@ -134,6 +140,7 @@ def encontrar_pet():
     retorno = {'mensagem': 'Busca cadastrada com sucesso!',
                'encontrar_pet_id': encontrar_pet.id}
 
+    enviar_email(encontrar_pet.id , encontrar_pet.tutor_email)
 
     return jsonify(retorno), 200
 
@@ -206,16 +213,17 @@ def encontrar_pet_tutor(encontrar_pet_id):
     for tutor in tutores:
         dist_tutor = round(geodesic((pet_latitude, pet_longitude), (tutor.latitude, tutor.longitude)).km,1)
         
-        fotos = []
-        for foto in tutor.fotos:
-            arquivo_temporario = io.BytesIO(foto.foto)
-            arquivo = secure_filename(str(uuid.uuid4()) + '.jpg')
-            caminho_arquivo = os.path.join(app.config['FOTO_FOLDER'], arquivo)
-            with open(caminho_arquivo, 'wb') as arquivo_saida:
-                arquivo_saida.write(arquivo_temporario.getbuffer())
-            fotos.append(arquivo)
+        if not NaoApresentar.query.filter(and_(NaoApresentar.encontrar_pet_id == encontrar_pet_id, NaoApresentar.encontrar_tutor_id == tutor.id)).first() and dist_tutor <= distancia_maxima:
 
-        if dist_tutor <= distancia_maxima:
+            fotos = []
+            for foto in tutor.fotos:
+                arquivo_temporario = io.BytesIO(foto.foto)
+                arquivo = secure_filename(str(uuid.uuid4()) + '.jpg')
+                caminho_arquivo = os.path.join(app.config['FOTO_FOLDER'], arquivo)
+                with open(caminho_arquivo, 'wb') as arquivo_saida:
+                    arquivo_saida.write(arquivo_temporario.getbuffer())
+                fotos.append(arquivo)
+
             tutores_filtrados.append({
                 'id': tutor.id,
                 'local': tutor.local,
@@ -253,13 +261,24 @@ def encontrar_pet_tutor(encontrar_pet_id):
         'tutores': tutores_filtrados
     }
     
-    enviar_email(encontrar_pet_id , encontrar_pet.tutor_email)
-    
     return render_template("busca.html", resposta=resposta)
+
+@app.route('/nao_apresentar', methods=['POST'])
+def nao_apresentar():
+    encontrar_pet_id = request.get_json()['encontrar_pet_id']
+    encontrar_tutor_id = request.get_json()['encontrar_tutor_id']
+    
+    nao_apresentar = NaoApresentar(encontrar_pet_id= encontrar_pet_id, encontrar_tutor_id= encontrar_tutor_id)
+    
+    db.session.add(nao_apresentar)
+    db.session.commit()
+    
+    retorno = { 'mensagem': "Salvo com sucesso"}
+    return jsonify(retorno), 200
 
 def enviar_email(encontrar_pet_id , destinatario):
     
-    link = 'http://localhost:5000/encontrar_pet_tutor/'+encontrar_pet_id
+    link = 'http://localhost:5000/encontrar_pet_tutor/'+str(encontrar_pet_id)
     msg = Message('Faro - Atualização sobre sua busca', sender=app.config['MAIL_USERNAME'], recipients=[destinatario])
     msg.body = "Para visualizar atualizações na sua busca, clique no link "+ link
     mail.send(msg)
