@@ -1,4 +1,3 @@
-import base64
 import uuid
 from flask import Flask, jsonify, render_template, request
 from werkzeug.utils import secure_filename
@@ -12,6 +11,7 @@ from psycopg2.extensions import register_adapter, AsIs
 import io
 from PIL import Image
 from datetime import datetime
+from flask_mail import Mail, Message
 
 
 
@@ -23,6 +23,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['FOTO_FOLDER'] = './static/foto'
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'faroatualizacao@gmail.com' # Coloque aqui seu email
+app.config['MAIL_PASSWORD'] = 'zcuffffjapjpvlpl' # Coloque aqui sua senha
+
+mail = Mail(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -246,8 +253,18 @@ def encontrar_pet_tutor(encontrar_pet_id):
         'tutores': tutores_filtrados
     }
     
+    enviar_email(encontrar_pet_id , encontrar_pet.tutor_email)
+    
     return render_template("busca.html", resposta=resposta)
 
+def enviar_email(encontrar_pet_id , destinatario):
+    
+    link = 'http://localhost:5000/encontrar_pet_tutor/'+encontrar_pet_id
+    msg = Message('Faro - Atualização sobre sua busca', sender=app.config['MAIL_USERNAME'], recipients=[destinatario])
+    msg.body = "Para visualizar atualizações na sua busca, clique no link "+ link
+    mail.send(msg)
+    
+    return 'Email enviado com sucesso'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
