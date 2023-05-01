@@ -28,7 +28,7 @@ def classificar_imagem(arquivo_imagem):
     
     # Lê a imagem a partir do objeto FileStorage
     imagem = tf.image.decode_image(arquivo_imagem.read(), channels=3)
-    
+
     # Faz o pré-processamento da imagem
     imagem = redimensiona_imagem(imagem)
     

@@ -181,6 +181,8 @@ function encontrarPet() {
       modalEncontrarPet.querySelector('[data-bs-dismiss="modal"]').click();
       const modalSucesso = new bootstrap.Modal(document.getElementById('modalSucesso'));
       modalSucesso.show();
+
+      window.location.href = '/encontrar_pet_tutor/'+data['encontrar_pet_id'];
     })
     .catch(error => {
       console.log("erro");

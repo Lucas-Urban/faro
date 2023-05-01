@@ -1,18 +1,27 @@
+import base64
+import uuid
 from flask import Flask, jsonify, render_template, request
 from werkzeug.utils import secure_filename
 from statistics import mode
 from faro_ia import *
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import os
 from geopy.distance import geodesic
+import numpy as np
+from psycopg2.extensions import register_adapter, AsIs
+import io
+from PIL import Image
+from datetime import datetime
 
+
+
+register_adapter(np.float32, AsIs)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1123@localhost/faro'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app.config['UPLOAD_FOLDER'] = './upload'
+app.config['FOTO_FOLDER'] = './static/foto'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -29,11 +38,13 @@ class EncontrarPet(db.Model):
     longitude = db.Column(db.Float)
     fotos = db.relationship('EncontrarPetFoto', backref='encontrar_pet', lazy=True)
     racas = db.relationship('RacaPet', backref='encontrar_pet', lazy=True)
+    data = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 class EncontrarPetFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
-    arquivo = db.Column(db.String(50))
+    foto = db.Column(db.LargeBinary)    
     
 class RacaPet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,11 +62,12 @@ class EncontrarTutor(db.Model):
     longitude = db.Column(db.Float)
     fotos = db.relationship('EncontrarTutorFoto', backref='encontrar_tutor', lazy=True)
     racas = db.relationship('RacaTutor', backref='encontrar_tutor', lazy=True)
+    data = db.Column(db.DateTime, default=datetime.utcnow)
 
 class EncontrarTutorFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
-    arquivo = db.Column(db.String(50))
+    foto = db.Column(db.LargeBinary)
 
 class RacaTutor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -94,22 +106,29 @@ def encontrar_pet():
         nova_raca = RacaPet(raca=raca['raca'], precisao=raca['precisao'])
         encontrar_pet.racas.append(nova_raca)
 
-    # Processa as imagens e adiciona à lista de encontrar_pet_fotos do encontrar_pet
     for foto in inputFotosPet:
         arquivo = secure_filename(foto.filename)
-        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], arquivo)
-        foto.save(caminho_arquivo)
-        nova_foto = EncontrarPetFoto(arquivo=arquivo)
+        
+        imagem = Image.open(foto)
+        # Converte a imagem para JPEG
+        imagem_jpg = imagem.convert('RGB')
+        # Salva a imagem em memória como bytes
+        with io.BytesIO() as buffer:
+            imagem_jpg.save(buffer, format='JPEG')
+            foto_bytes = buffer.getvalue()
+        
+        nova_foto = EncontrarPetFoto(foto=foto_bytes)
         encontrar_pet.fotos.append(nova_foto)
 
     # Salva o encontrar_pet e suas encontrar_pet_fotos no banco de dados
     db.session.add(encontrar_pet)
     db.session.commit()
 
-    mensagem = f"Pet encontrado! Nome: {inputNomePet}, Local: {inputLocalPet}, Nome do Tutor: {inputNomeTutor}, E-mail: {inputEmailTutor}, Telefone: {inputTelefoneTutor}"
-    print(mensagem)  # Apenas para depuração
+    retorno = {'mensagem': 'Busca cadastrada com sucesso!',
+               'encontrar_pet_id': encontrar_pet.id}
 
-    return jsonify({'mensagem': mensagem}), 200
+
+    return jsonify(retorno), 200
 
 @app.route('/encontrar_tutor', methods=['POST'])
 def encontrar_tutor():
@@ -135,56 +154,82 @@ def encontrar_tutor():
     
     
     for raca in racas:
-        nova_raca = RacaPet(raca=raca['raca'], precisao=raca['precisao'])
-        encontrar_pet.racas.append(nova_raca)
+        nova_raca = RacaTutor(raca=raca['raca'], precisao=raca['precisao'])
+        encontrar_tutor.racas.append(nova_raca)
 
     # Processa as imagens e adiciona à lista de encontrar_tutor_fotos do encontrar_tutor
     for foto in inputFotosPet:
-        arquivo = secure_filename(foto.filename)
-        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], arquivo)
-        foto.save(caminho_arquivo)
-        nova_foto = EncontrarTutorFoto(arquivo=arquivo)
+        imagem = Image.open(foto)
+        # Converte a imagem para JPEG
+        imagem_jpg = imagem.convert('RGB')
+        # Salva a imagem em memória como bytes
+        with io.BytesIO() as buffer:
+            imagem_jpg.save(buffer, format='JPEG')
+            foto_bytes = buffer.getvalue()
+        
+        nova_foto = EncontrarTutorFoto(foto=foto_bytes)
         encontrar_tutor.fotos.append(nova_foto)
 
     # Salva o encontrar_tutor e suas encontrar_tutor_fotos no banco de dados
     db.session.add(encontrar_tutor)
     db.session.commit()
 
-    mensagem = f"Pet encontrado! Local: {inputLocalEncontrarTutor}, Nome do anjo: {inputNomeAnjo}, E-mail: {inputEmailAnjo}, Telefone: {inputTelefoneAnjo} raça: {raca}"
-    print(mensagem)  # Apenas para depuração
+    mensagem = f"Pet encontrado! Local: {inputLocalEncontrarTutor}, Nome do anjo: {inputNomeAnjo}, E-mail: {inputEmailAnjo}, Telefone: {inputTelefoneAnjo}"
+    #print(mensagem)  # Apenas para depuração
  
     return jsonify({'mensagem': mensagem}), 200
 
 @app.route('/encontrar_pet_tutor/<encontrar_pet_id>', methods=['GET'])
 def encontrar_pet_tutor(encontrar_pet_id):
-    # consulta o pet com o ID correspondente e extrai a sua localização
+    # consulta o pet com o ID correspondente e extrai a sua localização e raças
     encontrar_pet = EncontrarPet.query.get(encontrar_pet_id)
     
     if encontrar_pet is None:
         return jsonify({'message': 'Pet não encontrado'}), 404
     
+    distancia_maxima = 10
+    
     pet_latitude = encontrar_pet.latitude
     pet_longitude = encontrar_pet.longitude
-    raca = encontrar_pet.raca
+    racas = [raca.raca for raca in encontrar_pet.racas]
 
-    # consulta os tutores com a mesma raça e filtra aqueles que estão a no máximo 10 quilômetros de distância do pet
-    tutores = EncontrarTutor.query.filter_by(raca=raca).all()
+    # consulta os tutores com as mesmas raças e filtra aqueles que estão a no máximo 10 quilômetros de distância do pet
+    tutores = EncontrarTutor.query.filter(EncontrarTutor.racas.any(RacaTutor.raca.in_(racas))).all()
     tutores_filtrados = []
     for tutor in tutores:
-        dist_tutor = geodesic((pet_latitude, pet_longitude), (tutor.latitude, tutor.longitude)).km
-        if dist_tutor <= 10:
+        dist_tutor = round(geodesic((pet_latitude, pet_longitude), (tutor.latitude, tutor.longitude)).km,1)
+        
+        fotos = []
+        for foto in tutor.fotos:
+            arquivo_temporario = io.BytesIO(foto.foto)
+            arquivo = secure_filename(str(uuid.uuid4()) + '.jpg')
+            caminho_arquivo = os.path.join(app.config['FOTO_FOLDER'], arquivo)
+            with open(caminho_arquivo, 'wb') as arquivo_saida:
+                arquivo_saida.write(arquivo_temporario.getbuffer())
+            fotos.append(arquivo)
+
+        if dist_tutor <= distancia_maxima:
             tutores_filtrados.append({
                 'id': tutor.id,
                 'local': tutor.local,
                 'anjo_nome': tutor.anjo_nome,
                 'anjo_email': tutor.anjo_email,
                 'anjo_telefone': tutor.anjo_telefone,
-                'raca': tutor.raca,
-                'fotos': [foto.arquivo for foto in tutor.fotos],
+                'data_hora': tutor.data.strftime("%d/%m/%Y %H:%M:%S"),
+                'fotos': fotos,
                 'distancia': dist_tutor
             })
 
     # monta o objeto de resposta em JSON, incluindo os dados do pet
+    fotos = []
+    for foto in encontrar_pet.fotos:
+        arquivo_temporario = io.BytesIO(foto.foto)
+        arquivo = secure_filename(str(uuid.uuid4()) + '.jpg')
+        caminho_arquivo = os.path.join(app.config['FOTO_FOLDER'], arquivo)
+        with open(caminho_arquivo, 'wb') as arquivo_saida:
+            arquivo_saida.write(arquivo_temporario.getbuffer())
+        fotos.append(arquivo)
+
     resposta = {
         'pet': {
             'id': encontrar_pet.id,
@@ -193,17 +238,16 @@ def encontrar_pet_tutor(encontrar_pet_id):
             'tutor_nome': encontrar_pet.tutor_nome,
             'tutor_email': encontrar_pet.tutor_email,
             'tutor_telefone': encontrar_pet.tutor_telefone,
-            'raca': encontrar_pet.raca,
-            'fotos': [foto.arquivo for foto in encontrar_pet.fotos],
+            'fotos': fotos,
             'latitude': encontrar_pet.latitude,
-            'longitude': encontrar_pet.longitude
+            'longitude': encontrar_pet.longitude,
+            'data_hora': encontrar_pet.data.strftime("%d/%m/%Y %H:%M:%S")   
         },
         'tutores': tutores_filtrados
     }
     
-    # retorna a resposta em JSON
-    return jsonify(resposta),200
-    
-    
+    return render_template("busca.html", resposta=resposta)
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
