@@ -94,7 +94,7 @@ class Encontrado(db.Model):
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(db.DateTime, default=datetime.utcnow)   
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def homepage():
     return render_template("home.html")
 
@@ -194,8 +194,7 @@ def encontrar_tutor():
     db.session.add(encontrar_tutor)
     db.session.commit()
 
-    mensagem = f"Pet encontrado! Local: {inputLocalEncontrarTutor}, Nome do anjo: {inputNomeAnjo}, E-mail: {inputEmailAnjo}, Telefone: {inputTelefoneAnjo}"
-    #print(mensagem)  # Apenas para depuração
+    mensagem = f"Pet cadastrado com sucesso! Muito obrigado por colaboarar!"
  
     return jsonify({'mensagem': mensagem}), 200
 
@@ -391,8 +390,10 @@ def enviar_email(encontrar_pet_id , destinatario):
     
     link = 'http://localhost:5000/apresentar_busca/'+str(encontrar_pet_id)
     msg = Message('Faro - Atualização sobre sua busca', sender=app.config['MAIL_USERNAME'], recipients=[destinatario])
-    msg.body = "Para visualizar atualizações na sua busca, clique no link "+ link
+    msg.body = "Sua busca foi cadastrada com sucesso!\nPara visualizar atualizações na sua busca, clique no link "+ link
     mail.send(msg)
+    
+    
     
     return 'Email enviado com sucesso'
 

@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
         encontrarTutor();
     });
 
-
+    modalProcessing = new bootstrap.Modal(document.getElementById('modal-loading'));
 
 });
 
@@ -187,8 +187,7 @@ function encontrarPet() {
     formData.append('inputTelefoneTutor', inputTelefoneTutor);
 
     // Mostrar mensagem de processamento
-    const modalProcessing = document.querySelector('.modal-processing');
-    modalProcessing.style.display = 'block';
+    modalProcessing.show();
 
     fetch('encontrar_pet', {
         method: 'POST',
@@ -211,7 +210,7 @@ function encontrarPet() {
             //document.getElementById('inputFotoPet').value = '';
 
             // Esconder mensagem de processamento
-            modalProcessing.style.display = 'none';
+            modalProcessing.hide();
 
             // Exibe a mensagem de sucesso na tela
             const mensagemSucesso = document.getElementById('mensagemSucesso');
@@ -226,7 +225,7 @@ function encontrarPet() {
         .catch(error => {
             console.log("erro");
             // Esconder mensagem de processamento
-            modalProcessing.style.display = 'none';
+            modalProcessing.hide();
 
 
             const modalErro = new bootstrap.Modal(document.getElementById('modalErro'));
@@ -267,8 +266,8 @@ function encontrarTutor() {
     formData.append('longLocalEncontrarTutor', longLocalEncontrarTutor);
 
     // Mostrar mensagem de processamento
-    const modalProcessing = document.querySelector('.modal-processing');
-    modalProcessing.style.display = 'block';
+    modalProcessing.show();
+
 
     fetch('encontrar_tutor', {
         method: 'POST',
@@ -283,15 +282,15 @@ function encontrarTutor() {
         })
         .then(data => {
             // Limpar campos do formulário
-            //document.getElementById('inputNomePet').value = '';
-            //document.getElementById('inputLocalEncontrarTutor').value = '';
-            //document.getElementById('inputNomeAnjo').value = '';
-            //document.getElementById('inputEmailAnjo').value = '';
-            //document.getElementById('inputTelefoneAnjo').value = '';
-            //document.getElementById('inputFotoEncontrarTutor').value = '';
+            document.getElementById('inputNomePet').value = '';
+            document.getElementById('inputLocalEncontrarTutor').value = '';
+            document.getElementById('inputNomeAnjo').value = '';
+            document.getElementById('inputEmailAnjo').value = '';
+            document.getElementById('inputTelefoneAnjo').value = '';
+            document.getElementById('inputFotoEncontrarTutor').value = '';
 
             // Esconder mensagem de processamento
-            modalProcessing.style.display = 'none';
+            modalProcessing.hide();
 
             // Exibe a mensagem de sucesso na tela
             const mensagemSucesso = document.getElementById('mensagemSucesso');
@@ -304,7 +303,7 @@ function encontrarTutor() {
         .catch(error => {
             console.log("erro");
             // Esconder mensagem de processamento
-            modalProcessing.style.display = 'none';
+            modalProcessing.hide();
 
 
             const modalErro = new bootstrap.Modal(document.getElementById('modalErro'));
