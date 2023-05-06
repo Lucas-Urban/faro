@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -9,7 +8,7 @@ dataset, info = tfds.load('stanford_dogs', with_info=True, as_supervised=True)
 class_names = np.array(info.features['label'].names)
 
 # Carrega o modelo treinado
-modelo_path = 'modelo_dogs.h5'
+modelo_path = './web/py/modelo_dogs.h5'
 modelo = tf.keras.models.load_model(modelo_path)
 
 # Define o número de classes e as dimensões das imagens
