@@ -9640,6 +9640,7 @@ body {
 .foto_busca{
   max-height: 700px;
   max-width: auto;
+  min-height: 300px;
 }
 
 .navbar-dark {

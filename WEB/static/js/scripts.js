@@ -221,7 +221,7 @@ function encontrarPet() {
             const modalSucesso = new bootstrap.Modal(document.getElementById('modalSucesso'));
             modalSucesso.show();
 
-            window.location.href = '/encontrar_pet_tutor/' + data['encontrar_pet_id'];
+            window.location.href = '/apresentar_busca/' + data['encontrar_pet_id'];
         })
         .catch(error => {
             console.log("erro");
@@ -233,6 +233,7 @@ function encontrarPet() {
             modalErro.show(); // Exibe o modal de erro
         });
 }
+
 function encontrarTutor() {
 
     const inputLocalEncontrarTutor = document.getElementById('inputLocalEncontrarTutor').value;

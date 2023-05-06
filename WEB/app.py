@@ -86,7 +86,13 @@ class NaoApresentar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
-    data = db.Column(db.DateTime, default=datetime.utcnow)    
+    data = db.Column(db.DateTime, default=datetime.utcnow)
+    
+class Encontrado(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
+    encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
+    data = db.Column(db.DateTime, default=datetime.utcnow)   
 
 @app.route('/')
 def homepage():
@@ -193,13 +199,19 @@ def encontrar_tutor():
  
     return jsonify({'mensagem': mensagem}), 200
 
-@app.route('/encontrar_pet_tutor/<encontrar_pet_id>', methods=['GET'])
-def encontrar_pet_tutor(encontrar_pet_id):
+@app.route('/apresentar_busca/<encontrar_pet_id>', methods=['GET'])
+def apresentar_busca(encontrar_pet_id):
     # consulta o pet com o ID correspondente e extrai a sua localização e raças
     encontrar_pet = EncontrarPet.query.get(encontrar_pet_id)
     
+    
     if encontrar_pet is None:
         return jsonify({'message': 'Pet não encontrado'}), 404
+    
+    encontrado = Encontrado.query.filter(Encontrado.encontrar_pet_id == encontrar_pet_id).first()
+    
+    if encontrado is not None:
+        return apresentar_pet_encontrado(encontrado.encontrar_pet_id, encontrado.encontrar_tutor_id)
     
     distancia_maxima = 10
     
@@ -256,13 +268,83 @@ def encontrar_pet_tutor(encontrar_pet_id):
             'fotos': fotos,
             'latitude': encontrar_pet.latitude,
             'longitude': encontrar_pet.longitude,
-            'data_hora': encontrar_pet.data.strftime("%d/%m/%Y %H:%M:%S")   
+            'data_hora': encontrar_pet.data.strftime("%d/%m/%Y %H:%M:%S"),
+            'id_pet_encontrado': 0
         },
         'tutores': tutores_filtrados
     }
     
     return render_template("busca.html", resposta=resposta)
 
+def apresentar_pet_encontrado(encontrar_pet_id,encontrar_tutor_id):
+
+    print(encontrar_pet_id)
+    print(encontrar_tutor_id)
+    encontrar_pet = EncontrarPet.query.get(encontrar_pet_id)
+    if encontrar_pet is None:
+        return jsonify({'message': 'Pet não encontrado'}), 404
+    
+    pet_latitude = encontrar_pet.latitude
+    pet_longitude = encontrar_pet.longitude
+    racas = [raca.raca for raca in encontrar_pet.racas]
+
+    # consulta os tutores com as mesmas raças e filtra aqueles que estão a no máximo 10 quilômetros de distância do pet
+    tutor = EncontrarTutor.query.get(encontrar_tutor_id)
+    tutores_filtrados = []
+
+    dist_tutor = round(geodesic((pet_latitude, pet_longitude), (tutor.latitude, tutor.longitude)).km,1)
+    
+    fotos = []
+    for foto in tutor.fotos:
+        arquivo_temporario = io.BytesIO(foto.foto)
+        arquivo = secure_filename(str(uuid.uuid4()) + '.jpg')
+        caminho_arquivo = os.path.join(app.config['FOTO_FOLDER'], arquivo)
+        with open(caminho_arquivo, 'wb') as arquivo_saida:
+            arquivo_saida.write(arquivo_temporario.getbuffer())
+        fotos.append(arquivo)
+
+    tutores_filtrados.append({
+        'id': tutor.id,
+        'local': tutor.local,
+        'latitude': tutor.latitude,
+        'longitude': tutor.longitude,
+        'anjo_nome': tutor.anjo_nome,
+        'anjo_email': tutor.anjo_email,
+        'anjo_telefone': tutor.anjo_telefone,
+        'data_hora': tutor.data.strftime("%d/%m/%Y %H:%M:%S"),
+        'fotos': fotos,
+        'distancia': dist_tutor
+    })
+
+    # monta o objeto de resposta em JSON, incluindo os dados do pet
+    fotos = []
+    for foto in encontrar_pet.fotos:
+        arquivo_temporario = io.BytesIO(foto.foto)
+        arquivo = secure_filename(str(uuid.uuid4()) + '.jpg')
+        caminho_arquivo = os.path.join(app.config['FOTO_FOLDER'], arquivo)
+        with open(caminho_arquivo, 'wb') as arquivo_saida:
+            arquivo_saida.write(arquivo_temporario.getbuffer())
+        fotos.append(arquivo)
+
+    resposta = {
+        'pet': {
+            'id': encontrar_pet.id,
+            'nome': encontrar_pet.nome,
+            'local': encontrar_pet.local,
+            'tutor_nome': encontrar_pet.tutor_nome,
+            'tutor_email': encontrar_pet.tutor_email,
+            'tutor_telefone': encontrar_pet.tutor_telefone,
+            'fotos': fotos,
+            'latitude': encontrar_pet.latitude,
+            'longitude': encontrar_pet.longitude,
+            'data_hora': encontrar_pet.data.strftime("%d/%m/%Y %H:%M:%S"),
+            'id_pet_encontrado': encontrar_tutor_id
+        },
+        'tutores': tutores_filtrados
+    }
+    
+    return render_template("encontrado.html", resposta=resposta)
+    
 @app.route('/nao_apresentar', methods=['POST'])
 def nao_apresentar():
     encontrar_pet_id = request.get_json()['encontrar_pet_id']
@@ -276,9 +358,38 @@ def nao_apresentar():
     retorno = { 'mensagem': "Salvo com sucesso"}
     return jsonify(retorno), 200
 
+@app.route('/encontrado', methods=['POST'])
+def encontrado():
+    encontrar_pet_id = request.get_json()['encontrar_pet_id']
+    encontrar_tutor_id = request.get_json()['encontrar_tutor_id']
+    
+    encontrado = Encontrado(encontrar_pet_id= encontrar_pet_id, encontrar_tutor_id= encontrar_tutor_id)
+    
+    db.session.add(encontrado)
+    db.session.commit()
+    
+    retorno = { 'mensagem': "Salvo com sucesso"}
+    return jsonify(retorno), 200
+
+@app.route('/remover_encontrado', methods=['POST'])
+def remover_encontrado():
+    encontrar_pet_id = request.get_json()['encontrar_pet_id']
+    encontrar_tutor_id = request.get_json()['encontrar_tutor_id']
+    
+    encontrado = Encontrado.query.filter_by(encontrar_pet_id=encontrar_pet_id, encontrar_tutor_id=encontrar_tutor_id).first()
+    
+    if encontrado:
+        db.session.delete(encontrado)
+        db.session.commit()
+        retorno = {'mensagem': 'Registro removido com sucesso'}
+        return jsonify(retorno), 200
+    else:
+        retorno = {'mensagem': 'Registro não encontrado'}
+        return jsonify(retorno), 404
+
 def enviar_email(encontrar_pet_id , destinatario):
     
-    link = 'http://localhost:5000/encontrar_pet_tutor/'+str(encontrar_pet_id)
+    link = 'http://localhost:5000/apresentar_busca/'+str(encontrar_pet_id)
     msg = Message('Faro - Atualização sobre sua busca', sender=app.config['MAIL_USERNAME'], recipients=[destinatario])
     msg.body = "Para visualizar atualizações na sua busca, clique no link "+ link
     mail.send(msg)
