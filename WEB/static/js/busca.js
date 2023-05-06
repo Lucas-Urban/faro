@@ -6,9 +6,31 @@ $(document).ready(function () {
         autoplaySpeed: 2000 // define a velocidade de transição das imagens
     });
 
+    window.addEventListener('beforeunload', function () {
 
+        deletarFotos();
+
+    });
 
 });
+
+function deletarFotos() {
+    const fotos = document.querySelectorAll(".foto");
+    var filesToDelete = [];
+
+    // Itera sobre a lista de imagens e adiciona o atributo 'src' de cada uma ao array
+    fotos.forEach((img) => {
+        filesToDelete.push(img.getAttribute('src'));
+    });
+
+    fetch('/delete_files', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ filesToDelete: filesToDelete })
+    });
+}
 
 function naoApresentar(encontrarPetId, encontrarTutorId) {
 

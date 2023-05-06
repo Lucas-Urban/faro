@@ -1,8 +1,8 @@
 from operator import and_
+import os
 import uuid
 from flask import Flask, jsonify, render_template, request
 from werkzeug.utils import secure_filename
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from geopy.distance import geodesic
 import numpy as np
@@ -13,7 +13,7 @@ from flask_mail import Mail
 
 from py.faro_email import *
 from py.faro_ia import *
-from py.models import *
+from py.models import EncontrarPet, EncontrarPetFoto, RacaPet, EncontrarTutor, EncontrarTutorFoto, RacaTutor, NaoApresentar, Encontrado,db
 
 
 register_adapter(np.float32, AsIs)
@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1123@localhost/faro'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app.config['FOTO_FOLDER'] = './static/foto'
+app.config['FOTO_FOLDER'] = './WEB/static/foto'
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -31,7 +31,7 @@ app.config['MAIL_USERNAME'] = 'faroatualizacao@gmail.com' # Coloque aqui seu ema
 app.config['MAIL_PASSWORD'] = 'zcuffffjapjpvlpl' # Coloque aqui sua senha
 
 mail = Mail(app)
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 
 
@@ -87,7 +87,7 @@ def encontrar_pet():
     retorno = {'mensagem': 'Busca cadastrada com sucesso!',
                'encontrar_pet_id': encontrar_pet.id}
 
-    enviar_email(encontrar_pet.id , encontrar_pet.tutor_email)
+    enviar_email(encontrar_pet)
 
     return jsonify(retorno), 200
 
@@ -135,7 +135,7 @@ def encontrar_tutor():
     db.session.add(encontrar_tutor)
     db.session.commit()
 
-    mensagem = f"Pet cadastrado com sucesso! Muito obrigado por colaboarar!"
+    mensagem = f"Pet cadastrado com sucesso! Muito obrigado por colaborar!"
  
     return jsonify({'mensagem': mensagem}), 200
 
@@ -327,6 +327,17 @@ def remover_encontrado():
         retorno = {'mensagem': 'Registro não encontrado'}
         return jsonify(retorno), 404
 
+@app.route('/delete_files', methods=['POST'])
+def delete_files():
+    files_to_delete = request.json['filesToDelete']
+    for file in files_to_delete:
+        file = file.replace('/static/foto/', '')
+        file_path = os.path.join(app.config['FOTO_FOLDER'], file)
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            
+    return '', 204
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

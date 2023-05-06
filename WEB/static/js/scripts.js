@@ -289,7 +289,7 @@ function encontrarTutor() {
             document.getElementById('inputTelefoneAnjo').value = '';
             document.getElementById('inputFotoEncontrarTutor').value = '';
 
-            // Esconder mensagem de processamento
+            // Escond er mensagem de processamento
             modalProcessing.hide();
 
             // Exibe a mensagem de sucesso na tela
@@ -299,6 +299,7 @@ function encontrarTutor() {
             modalEncontrarPet.querySelector('[data-bs-dismiss="modal"]').click();
             const modalSucesso = new bootstrap.Modal(document.getElementById('modalSucesso'));
             modalSucesso.show();
+
         })
         .catch(error => {
             console.log("erro");
