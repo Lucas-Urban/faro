@@ -9639,7 +9639,7 @@ body {
 
 .foto_busca{
   max-height: 700px;
-  max-width: auto;
+  max-width: 100%;
   min-height: 300px;
 }
 

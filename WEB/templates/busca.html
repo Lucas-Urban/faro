@@ -49,10 +49,9 @@
             </div>
 
             <div class="row">
-                <div class="py-4 bg-light">
+                <div class="py-4 bg-light d-flex justify-content-center" style="max-width: 800px; margin: 0 auto;">
                     <div class="container">
                         <div class="card box-shadow">
-
                             <div class="col-md-12 slider slider-busca">
                                 {% for foto in resposta['pet']['fotos'] %}
                                 <img class="foto foto_busca" src="{{ url_for('static', filename='foto/'+foto) }}"
@@ -90,9 +89,10 @@
                                     {{tutor['anjo_nome']}}<br>{{tutor['anjo_email']}}<br>{{tutor['anjo_telefone']}}</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-sucess" onclick="Encontrado({{ resposta['pet']['id'] }}, {{tutor['id']}})">Achei!</button>
+                                        <button type="button" class="btn btn-sm btn-sucess"
+                                            onclick="Encontrado({{ resposta['pet']['id'] }}, {{tutor['id']}})">Achei!</button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary"
-                                        onclick="naoApresentar({{ resposta['pet']['id'] }}, {{tutor['id']}})">Remover</button>
+                                            onclick="naoApresentar({{ resposta['pet']['id'] }}, {{tutor['id']}})">Remover</button>
                                     </div> <small class="text-muted">{{tutor['distancia']}} km</small>
                                 </div>
                             </div>
@@ -182,7 +182,7 @@
                 <div class="modal-content">
                     <div class="modal-body text-center">
                         <div class="loading-spinner mb-2"></div>
-                        <div>Loading</div>
+                        <div>Processando</div>
                     </div>
                 </div>
             </div>
