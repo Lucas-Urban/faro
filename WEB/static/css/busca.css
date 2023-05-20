@@ -4598,6 +4598,10 @@ input[type="button"].btn-block {
   padding: 1.25rem;
 }
 
+.card-tutor {
+  min-width: 350px;
+}
+
 .card-title {
   margin-bottom: 0.75rem;
 }
@@ -4672,6 +4676,7 @@ input[type="button"].btn-block {
 
 .card-img-top {
   width: 100%;
+  height: auto;
   border-top-left-radius: calc(0.25rem - 1px);
   border-top-right-radius: calc(0.25rem - 1px);
 }

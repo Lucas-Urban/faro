@@ -49,7 +49,7 @@
             </div>
 
             <div class="row">
-                <div class="py-4 bg-light d-flex justify-content-center" style="max-width: 800px; margin: 0 auto;">
+                <div class="py-4 bg-light d-flex justify-content-center" style="width: 100%; max-width: 800px; margin: 0 auto;">
                     <div class="container">
                         <div class="card box-shadow">
                             <div class="col-md-12 slider slider-busca">
@@ -73,12 +73,12 @@
                     <p>Não foram encontrados registros</p>
                     {% else %}
                     {% for tutor in resposta['tutores'] %}
-                    <div class="col-md-4 p-3" id="card_tutor_{{tutor['id']}}">
+                    <div class="col-md-4 p-3 card-tutor" id="card_tutor_{{tutor['id']}}">
                         <div class="card box-shadow">
                             <div class="col-md-12 slider">
                                 {% for foto in tutor['fotos'] %}
                                 <img class="foto card-img-top" src="{{ url_for('static', filename='foto/'+foto) }}"
-                                    alt="Foto do tutor">
+                                    alt="Foto do tutor" >
                                 {% endfor %}
                             </div>
                             <div class="card-body">
