@@ -153,13 +153,13 @@ def apresentar_busca(encontrar_pet_id):
     if encontrado is not None:
         return apresentar_pet_encontrado(encontrado.encontrar_pet_id, encontrado.encontrar_tutor_id)
     
-    distancia_maxima = 10
+    distancia_maxima = 15
     
     pet_latitude = encontrar_pet.latitude
     pet_longitude = encontrar_pet.longitude
     racas = [raca.raca for raca in encontrar_pet.racas]
 
-    # consulta os tutores com as mesmas raças e filtra aqueles que estão a no máximo 10 quilômetros de distância do pet
+    # consulta os tutores com as mesmas raças e filtra aqueles que estão a no máximo 15 quilômetros de distância do pet
     tutores = EncontrarTutor.query.filter(EncontrarTutor.racas.any(RacaTutor.raca.in_(racas))).all()
     tutores_filtrados = []
     for tutor in tutores:
