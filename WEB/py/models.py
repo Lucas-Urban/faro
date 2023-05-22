@@ -15,7 +15,7 @@ class EncontrarPet(db.Model):
     longitude = db.Column(db.Float)
     fotos = db.relationship('EncontrarPetFoto', backref='encontrar_pet', lazy=True)
     racas = db.relationship('RacaPet', backref='encontrar_pet', lazy=True)
-    data = db.Column(db.DateTime, default=datetime.utcnow)
+    data = db.Column(db.DateTime, default=datetime.now)
 
 class EncontrarPetFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,7 +38,7 @@ class EncontrarTutor(db.Model):
     longitude = db.Column(db.Float)
     fotos = db.relationship('EncontrarTutorFoto', backref='encontrar_tutor', lazy=True)
     racas = db.relationship('RacaTutor', backref='encontrar_tutor', lazy=True)
-    data = db.Column(db.DateTime, default=datetime.utcnow)
+    data = db.Column(db.DateTime, default=datetime.now)
 
 class EncontrarTutorFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,10 +55,10 @@ class NaoApresentar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
-    data = db.Column(db.DateTime, default=datetime.utcnow)
+    data = db.Column(db.DateTime, default=datetime.now)
     
 class Encontrado(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     encontrar_pet_id = db.Column(db.Integer, db.ForeignKey('encontrar_pet.id', ondelete='CASCADE'), nullable=False)
     encontrar_tutor_id = db.Column(db.Integer, db.ForeignKey('encontrar_tutor.id', ondelete='CASCADE'), nullable=False)
-    data = db.Column(db.DateTime, default=datetime.utcnow)   
+    data = db.Column(db.DateTime, default=datetime.now)   
