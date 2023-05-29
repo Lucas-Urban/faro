@@ -1,41 +1,77 @@
-from tensorflow.python.keras.backend import set_session
-from tensorflow.python.keras.models import load_model
-import tensorflow as tf
-import tensorflow_datasets as tfds
-import numpy as np
 import os
+import numpy as np
+from keras.preprocessing.image import load_img, img_to_array
+from keras.applications.mobilenet_v2 import preprocess_input
+from keras.models import load_model
+import pandas as pd
 
-# Limpa a sessão do Keras e define as configurações da GPU
-tf.keras.backend.clear_session()
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.5
-config.gpu_options.allow_growth = True
-session = tf.compat.v1.Session(config=config)
-set_session(session)
+from rotulos_associados import rotulos_stanford, rotulos_kaggle, mapeamento_rotulos
 
-# Define as dimensões das imagens
+# Carrega o modelo treinado
+modelo_treinado = load_model('C:\\Users\\lucas\\OneDrive\\Documentos\\GitHub\\faro\\IA\\modelo_dogs.h5')
+
+# Define o diretório do conjunto de dados
+diretorio_teste = 'C:\\Users\\lucas\\OneDrive\\Documentos\\GitHub\\faro\\IA\\dog-breed-identification\\test'
+
+# Carrega o arquivo de rótulos (breeds)
+arquivo_rotulos = 'C:\\Users\\lucas\\OneDrive\\Documentos\\GitHub\\faro\\IA\\dog-breed-identification\\labels.csv'
+
+# Carrega o arquivo de rótulos (breeds)
+rotulos_df = pd.read_csv(arquivo_rotulos)
+rotulos_dict = dict(zip(rotulos_df.id, rotulos_df.breed))
+
+# Define o tamanho da imagem de entrada
 img_altura, img_largura = 224, 224
 
-with tf.device('/CPU:0'):
-    # Carrega o modelo da rede neural treinado com o dataset Stanford Dogs
-    modelo = tf.keras.models.load_model('modelo_dogs.h5')
+# Preprocessa a imagem de entrada
+def preprocess_image(image):
+    image = image.resize((img_altura, img_largura))
+    image = img_to_array(image)
+    image = preprocess_input(image)
+    image = np.expand_dims(image, axis=0)
+    return image
 
-    # Carrega o dataset Kaggle Dog Breed Identification
-    data_dir = './IA/dog-breed-identification'
-    test_filenames = os.listdir(os.path.join(data_dir, 'test'))
-    test_images = []
-    for filename in test_filenames:
-        img_path = os.path.join(data_dir, 'test', filename)
-        img = tf.keras.preprocessing.image.load_img(img_path, target_size=(img_altura, img_largura))
-        img = tf.keras.preprocessing.image.img_to_array(img)
-        img = np.expand_dims(img, axis=0)
-        img /= 255.0
-        test_images.append(img)
-    test_images = np.concatenate(test_images, axis=0)
+# Realiza a predição para cada imagem de teste
+acuracia_total = 0.0
+num_total_exemplos = 0
 
-    # Faz predições com o dataset Kaggle Dog Breed Identification
-    predicoes = modelo.predict(test_images)
+for imagem_nome in os.listdir(diretorio_teste):
+    imagem_path = os.path.join(diretorio_teste, imagem_nome)
 
-    # Avalia o modelo com o dataset Kaggle Dog Breed Identification
-    resultado_teste = modelo.evaluate(test_images, batch_size=32)
-    print('Acurácia no conjunto de teste:', resultado_teste[1])
+    # Carrega a imagem
+    imagem = load_img(imagem_path)
+
+    # Pré-processa a imagem
+    imagem = preprocess_image(imagem)
+
+    # Realiza a predição utilizando o modelo treinado
+    predicao = modelo_treinado.predict(imagem)
+    predicao_label = np.argmax(predicao)
+    classe_predita = mapeamento_rotulos[predicao_label]
+
+    # Obtém o rótulo real da imagem
+    imagem_id = os.path.splitext(imagem_nome)[0]
+    rótulo_real = rotulos_dict.get(imagem_id)
+    if rótulo_real is None:
+        rótulo_real = rotulos_kaggle.get(imagem_id)
+        if rótulo_real is None:
+            try:
+                rótulo_stanford_index = rotulos_stanford.index(imagem_id)
+                rótulo_real = mapeamento_rotulos.get(rótulo_stanford_index)
+            except ValueError:
+                rótulo_real = None
+
+    # Verifica se a predição está correta
+    if rótulo_real == classe_predita:
+        acuracia_total += 1.0
+    num_total_exemplos += 1
+
+    # Imprime informações sobre a imagem e a predição
+    print('Imagem_id:', imagem_id)
+    print('Imagem:', imagem_nome)
+    print('Rótulo real:', rótulo_real)
+    print('Predição:', classe_predita)
+    print('---')
+
+acuracia = acuracia_total / num_total_exemplos
+print('Acurácia:', acuracia)
