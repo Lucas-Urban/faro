@@ -1,2 +1,3 @@
 WEB/static/foto/*
 ngrok.exe
+WEB/migrations/*

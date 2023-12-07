@@ -11,7 +11,7 @@ import io
 from PIL import Image
 from flask_mail import Mail
 
-from py.faro_email import *
+#from py.faro_email import *
 from py.faro_ia import *
 from py.models import EncontrarPet, EncontrarPetFoto, RacaPet, EncontrarTutor, EncontrarTutorFoto, RacaTutor, NaoApresentar, Encontrado,db
 
@@ -19,7 +19,7 @@ from py.models import EncontrarPet, EncontrarPetFoto, RacaPet, EncontrarTutor, E
 register_adapter(np.float32, AsIs)
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1123@localhost/faro'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:dante963@localhost/faro'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['FOTO_FOLDER'] = './WEB/static/foto'
@@ -87,7 +87,7 @@ def encontrar_pet():
     retorno = {'mensagem': 'Busca cadastrada com sucesso!',
                'encontrar_pet_id': encontrar_pet.id}
 
-    enviar_email(encontrar_pet)
+    #enviar_email(encontrar_pet)
 
     return jsonify(retorno), 200
 

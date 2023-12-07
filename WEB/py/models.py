@@ -16,6 +16,7 @@ class EncontrarPet(db.Model):
     fotos = db.relationship('EncontrarPetFoto', backref='encontrar_pet', lazy=True)
     racas = db.relationship('RacaPet', backref='encontrar_pet', lazy=True)
     data = db.Column(db.DateTime, default=datetime.now)
+    tipo = db.Column(db.String(3))
 
 class EncontrarPetFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -39,6 +40,7 @@ class EncontrarTutor(db.Model):
     fotos = db.relationship('EncontrarTutorFoto', backref='encontrar_tutor', lazy=True)
     racas = db.relationship('RacaTutor', backref='encontrar_tutor', lazy=True)
     data = db.Column(db.DateTime, default=datetime.now)
+    tipo = db.Column(db.String(3))
 
 class EncontrarTutorFoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -3,5 +3,6 @@
     "python.analysis.extraPaths": [
         "./WEB",
         "./WEB"
-    ]
+    ],
+    "git.ignoreLimitWarning": true
 }
