@@ -96,7 +96,7 @@
                             <div class="project-text w-100 my-auto text-center text-lg-left">
                                 <h4 class="text-white">Encontrar PET</h4>
                                 <p class="mb-0 text-white">A função "Encontrar PET" permite que o tutor forneça
-                                    imagens e informações básicas do seu cão perdido. O sistema utiliza uma Rede Neural
+                                    imagens e informações básicas do seu animal perdido. O sistema utiliza uma Rede Neural
                                     para buscar possíveis resultados na base de dados e notifica o tutor sobre novos
                                     registros de "Encontrar Tutor".</p>
                             </div>
@@ -115,7 +115,7 @@
                             <div class="project-text w-100 my-auto text-center text-lg-right">
                                 <h4 class="text-white">Encontrar Tutor</h4>
                                 <p class="mb-0 text-white">A função "Encontrar Tutor" permite que o usuário forneça
-                                    imagens e a localização atual de um cão perdido. O sistema notifica possíveis
+                                    imagens e a localização atual de um animal perdido. O sistema notifica possíveis
                                     tutores que estão buscando seus pets, com base nas características físicas do
                                     animal.</p>
                             </div>
@@ -174,12 +174,12 @@
                             placeholder="Se não souber pode deixar em branco">
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="inputTipo" class="form-label">Qual tipo de animal?*</label><br>
-                            <label for="tipoAnimalCachorro">Cachorro</label>
-                            <input type="radio" id="tipoAnimalCachorro" name="tipoAnimal" value="cachorro" checked>
-                            <label for="tipoAnimalGato">Gato</label>
-                            <input type="radio" id="tipoAnimalGato" name="tipoAnimal" value="gato">
+                        <div class="col-md-12" id="tipoAnimalContainerPet">
+                            <label for="tipoAnimalCachorroPet" class="form-label">Qual tipo de animal?*</label><br>
+                            <label for="tipoAnimalCachorroPet">Cachorro</label>
+                            <input type="radio" id="tipoAnimalCachorroPet" name="tipoAnimalPet" value="dog" checked>
+                            <label for="tipoAnimalGatoPet">Gato</label>
+                            <input type="radio" id="tipoAnimalGatoPet" name="tipoAnimalPet" value="cat">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -229,12 +229,12 @@
                         Processando...
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="inputTipo" class="form-label">Qual tipo de animal?*</label><br>
-                            <label for="tipoAnimalCachorro">Cachorro</label>
-                            <input type="radio" id="tipoAnimalCachorro" name="tipoAnimal" value="cachorro" checked>
-                            <label for="tipoAnimalGato">Gato</label>
-                            <input type="radio" id="tipoAnimalGato" name="tipoAnimal" value="gato">
+                        <div class="col-md-12" id="tipoAnimalContainer">
+                            <label for="tipoAnimalCachorroEncontraTutor" class="form-label">Qual tipo de animal?*</label><br>
+                            <label for="tipoAnimalCachorroEncontraTutor">Cachorro</label>
+                            <input type="radio" id="tipoAnimalCachorroEncontraTutor" name="tipoAnimalEncontrarTutor" value="dog" checked>
+                            <label for="tipoAnimalGatoEncontraTutor">Gato</label>
+                            <input type="radio" id="tipoAnimalGatoEncontraTutor" name="tipoAnimalEncontrarTutor" value="cat">
                         </div>
                     </div>
                     <div class="mb-3">

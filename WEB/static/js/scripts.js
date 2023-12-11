@@ -163,6 +163,10 @@ function encontrarPet() {
     const inputEmailTutor = document.getElementById('inputEmailTutor').value;
     const inputTelefoneTutor = document.getElementById('inputTelefoneTutor').value;
     const inputFotoPet = document.getElementById('inputFotoPet').value;
+    
+    // Obtenha o valor do tipoAnimal selecionado
+    const tipoAnimalContainer = document.getElementById('tipoAnimalContainerPet');
+    const inputTipoPet = tipoAnimalContainer.querySelector('input[name="tipoAnimalPet"]:checked').value;
 
     if (!inputLocalPet || !inputNomeTutor || !inputEmailTutor || !inputFotoPet) {
         // Exibe mensagem de erro e sai da função
@@ -185,6 +189,7 @@ function encontrarPet() {
     formData.append('inputNomeTutor', inputNomeTutor);
     formData.append('inputEmailTutor', inputEmailTutor);
     formData.append('inputTelefoneTutor', inputTelefoneTutor);
+    formData.append('inputTipoPet', inputTipoPet);
 
     // Mostrar mensagem de processamento
     modalProcessing.show();
@@ -234,7 +239,7 @@ function encontrarPet() {
 }
 
 function encontrarTutor() {
-
+    console.log('encontrarTutor');
     const inputLocalEncontrarTutor = document.getElementById('inputLocalEncontrarTutor').value;
     const inputNomeAnjo = document.getElementById('inputNomeAnjo').value;
     const inputEmailAnjo = document.getElementById('inputEmailAnjo').value;
@@ -243,6 +248,12 @@ function encontrarTutor() {
 
     const latLocalEncontrarTutor = document.getElementById('latLocalEncontrarTutor').value;
     const longLocalEncontrarTutor = document.getElementById('longLocalEncontrarTutor').value;
+  
+    // Obtenha o valor do tipoAnimal selecionado
+    const tipoAnimalContainer = document.getElementById('tipoAnimalContainer');
+    const inputTipoEncontrarTutor = tipoAnimalContainer.querySelector('input[name="tipoAnimalEncontrarTutor"]:checked').value;
+  
+
 
     if (!inputLocalEncontrarTutor || !inputFotoEncontrarTutor) {
         // Exibe mensagem de erro e sai da função
@@ -264,6 +275,7 @@ function encontrarTutor() {
     formData.append('inputTelefoneAnjo', inputTelefoneAnjo);
     formData.append('latLocalEncontrarTutor', latLocalEncontrarTutor);
     formData.append('longLocalEncontrarTutor', longLocalEncontrarTutor);
+    formData.append('inputTipoEncontrarTutor', inputTipoEncontrarTutor);
 
     // Mostrar mensagem de processamento
     modalProcessing.show();

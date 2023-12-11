@@ -13,6 +13,7 @@ from flask_mail import Mail
 
 #from py.faro_email import *
 from py.faro_ia import *
+from py.faro_ia_cats import *
 from py.models import EncontrarPet, EncontrarPetFoto, RacaPet, EncontrarTutor, EncontrarTutorFoto, RacaTutor, NaoApresentar, Encontrado,db
 
 
@@ -49,15 +50,21 @@ def encontrar_pet():
     inputTelefoneTutor = request.form.get('inputTelefoneTutor')
     latLocalPet = request.form.get('latLocalPet')
     longLocalPet = request.form.get('longLocalPet')
+    inputTipoPet = request.form.get('inputTipoPet')
     
         
     # Cria o objeto encontrar_pet
-    encontrar_pet = EncontrarPet(nome=inputNomePet, local=inputLocalPet, tutor_nome=inputNomeTutor, tutor_email=inputEmailTutor, tutor_telefone=inputTelefoneTutor, latitude= latLocalPet, longitude= longLocalPet)
+    encontrar_pet = EncontrarPet(nome=inputNomePet, local=inputLocalPet, tutor_nome=inputNomeTutor, tutor_email=inputEmailTutor, tutor_telefone=inputTelefoneTutor, latitude= latLocalPet, longitude= longLocalPet, tipo= inputTipoPet)
 
     # Prepara a mensagem de sucesso
     racas = []
     for foto in inputFotosPet:
-        classes = classificar_imagem(foto)
+        if inputTipoPet == 'dog':
+            classes = classificar_imagem(foto)
+        elif inputTipoPet == 'cat':
+            classes = classificar_gato(foto)
+        else:
+            return "Tipo de animal não suportado."
         classes_ordenadas = sorted(classes, key=lambda x: x['precisao'], reverse=True)
         for classe in classes_ordenadas[:3]:
             racas.append({'raca': classe['classe'], 'precisao': classe['precisao']})
@@ -100,15 +107,21 @@ def encontrar_tutor():
     inputTelefoneAnjo = request.form.get('inputTelefoneAnjo')
     latLocalEncontrarTutor = request.form.get('latLocalEncontrarTutor')
     longLocalEncontrarTutor = request.form.get('longLocalEncontrarTutor')
+    inputTipoEncontrarTutor = request.form.get('inputTipoEncontrarTutor')
 
     
     # Cria o objeto encontrar_tutor
-    encontrar_tutor = EncontrarTutor(local=inputLocalEncontrarTutor, anjo_nome=inputNomeAnjo, anjo_email=inputEmailAnjo, anjo_telefone=inputTelefoneAnjo, latitude= latLocalEncontrarTutor, longitude= longLocalEncontrarTutor)
+    encontrar_tutor = EncontrarTutor(local=inputLocalEncontrarTutor, anjo_nome=inputNomeAnjo, anjo_email=inputEmailAnjo, anjo_telefone=inputTelefoneAnjo, latitude= latLocalEncontrarTutor, longitude= longLocalEncontrarTutor, tipo= inputTipoEncontrarTutor)
 
     # Prepara a mensagem de sucesso
     racas = []
     for foto in inputFotosPet:
-        classes = classificar_imagem(foto)
+        if inputTipoEncontrarTutor == 'dog':
+            classes = classificar_imagem(foto)
+        elif inputTipoEncontrarTutor == 'cat':
+            classes = classificar_gato(foto)
+        else:
+            return "Tipo de animal não suportado."
         classes_ordenadas = sorted(classes, key=lambda x: x['precisao'], reverse=True)
         for classe in classes_ordenadas[:3]:
             racas.append({'raca': classe['classe'], 'precisao': classe['precisao']})
